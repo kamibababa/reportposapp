@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
   <title>定位测试</title>
   <style>
     body {
@@ -10,17 +12,20 @@
       padding: 20px;
       line-height: 1.6;
     }
+
     .info {
       background: #f2f2f2;
       padding: 10px;
       border-radius: 6px;
     }
+
     .timestamp {
       color: #666;
       font-size: 0.9em;
     }
   </style>
 </head>
+
 <body>
   <h1>定位测试页面</h1>
   <p>每隔 1 分钟获取一次当前位置，并在下方显示：</p>
@@ -30,6 +35,11 @@
   </div>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('SW registration failed:', err));
+    }
     function updateLocationDisplay(position) {
       const { latitude, longitude, accuracy } = position.coords;
       const timestamp = new Date().toLocaleString();
@@ -64,4 +74,5 @@
     setInterval(getLocation, 60 * 1000);
   </script>
 </body>
+
 </html>
