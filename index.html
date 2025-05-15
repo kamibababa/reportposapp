@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>定位测试</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .info {
+      background: #f2f2f2;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .timestamp {
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>定位测试页面</h1>
+  <p>每隔 1 分钟获取一次当前位置，并在下方显示：</p>
+
+  <div class="info" id="location-info">
+    <p>等待获取定位...</p>
+  </div>
+
+  <script>
+    function updateLocationDisplay(position) {
+      const { latitude, longitude, accuracy } = position.coords;
+      const timestamp = new Date().toLocaleString();
+      document.getElementById('location-info').innerHTML = `
+        <p><strong>时间：</strong><span class="timestamp">${timestamp}</span></p>
+        <p><strong>纬度：</strong>${latitude.toFixed(6)}</p>
+        <p><strong>经度：</strong>${longitude.toFixed(6)}</p>
+        <p><strong>精度：</strong>${accuracy} 米</p>
+      `;
+    }
+
+    function handleError(err) {
+      document.getElementById('location-info').innerHTML = `<p style="color:red;">定位失败：${err.message}</p>`;
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(updateLocationDisplay, handleError, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+      } else {
+        document.getElementById('location-info').innerHTML = '<p>该浏览器不支持定位。</p>';
+      }
+    }
+
+    // 初始获取一次
+    getLocation();
+
+    // 每 60 秒获取一次
+    setInterval(getLocation, 60 * 1000);
+  </script>
+</body>
+</html>
